@@ -1,0 +1,31 @@
+# render.yaml — Render Deployment Blueprint
+# Docs: https://render.com/docs/blueprint-spec
+
+services:
+  - type: web
+    name: career-setu-backend
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: GEMINI_API_KEY
+        sync: false   # Will be set manually in Render dashboard
+      - key: ALLOWED_ORIGINS
+        sync: false   # Set to your frontend URL, e.g. https://career-setu.onrender.com
+
+  - type: web
+    name: career-setu-frontend
+    runtime: docker
+    dockerfilePath: ./frontend/Dockerfile
+    dockerContext: ./frontend
+    plan: free
+    envVars:
+      - key: NEXT_PUBLIC_API_URL
+        fromService:
+          name: career-setu-backend
+          type: web
+          property: host
+        # Since Next.js uses NEXT_PUBLIC_ at build time, 
+        # Render will automatically pass this as a build arg if defined here.

@@ -1,0 +1,26 @@
+SACHIN SHARMA
+Full Stack Developer | Bangalore, India
+Email: sachin@example.com | Phone: +91 99999 88888
+
+SUMMARY
+Experienced Full Stack Developer with 3+ years of expertise in building scalable web applications using React, Node.js, and Python. Passionate about AI and machine learning integration.
+
+SKILLS
+- Languages: JavaScript (ES6+), Python, SQL
+- Frontend: React, Redux, Next.js, Tailwind CSS, HTML5, CSS3
+- Backend: Node.js, Express, FastAPI, RESTful APIs
+- Databases: MongoDB, PostgreSQL, Redis
+- Tools: Docker, Git, AWS, Jenkins
+
+EXPERIENCE
+Software Engineer | Tech Solutions Corp | Jan 2022 – Present
+- Developed and maintained responsive web applications using React and Tailwind CSS.
+- Optimized backend API performance by 40% using Redis caching.
+- Integrated OpenAI API for automated content generation features.
+
+Junior Developer | Web Innovators | June 2020 – Dec 2021
+- Built reusable UI components for client dashboards.
+- Assisted in the migration from monolithic architecture to microservices.
+
+EDUCATION
+B.Tech in Computer Science | National Institute of Technology | 2020

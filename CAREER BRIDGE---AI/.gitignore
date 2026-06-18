@@ -1,0 +1,38 @@
+# Dependencies
+node_modules/
+dist/
+.next/
+out/
+build/
+*.log
+
+# Python
+*.pyc
+__pycache__/
+.venv/
+venv/
+*.joblib
+
+# Secrets & Config
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+firebase-adminsdk.json
+*.json
+!package.json
+!tsconfig.json
+!next.config.js
+!postcss.config.js
+!tailwind.config.js
+!package-lock.json
+
+# IDE & OS
+.DS_Store
+.vscode/
+.idea/
+.expo/
+.turbo/
+.pytest_cache/
+.python-version
