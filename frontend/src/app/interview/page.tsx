@@ -1,11 +1,11 @@
 "use client";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import { INTERVIEW_QUESTIONS, JOB_ROLES } from "@/lib/data";
 import {
     MessageSquare, ChevronDown, Play, Send, RotateCcw, CheckCircle2,
-    Sparkles, Award, Target, ArrowRight, Mic, User, Bot
+    Sparkles, Award, Target, ArrowRight, Mic, MicOff, User, Bot, Volume2
 } from "lucide-react";
 
 interface Message {
@@ -26,6 +26,66 @@ export default function InterviewPage() {
     const [evaluating, setEvaluating] = useState(false);
     const [finished, setFinished] = useState(false);
     const [questions, setQuestions] = useState<string[]>([]);
+    const [isListening, setIsListening] = useState(false);
+    const [speechEnabled, setSpeechEnabled] = useState(true);
+    const recognitionRef = useRef<any>(null);
+
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+            if (SpeechRecognition) {
+                const recognition = new SpeechRecognition();
+                recognition.continuous = true;
+                recognition.interimResults = true; // Set to true to see live typing, but simple final transcript is more stable
+                
+                recognition.onresult = (event: any) => {
+                    let currentTranscript = "";
+                    for (let i = event.resultIndex; i < event.results.length; ++i) {
+                        if (event.results[i].isFinal) {
+                            currentTranscript += event.results[i][0].transcript + " ";
+                        }
+                    }
+                    if (currentTranscript) {
+                        setAnswer(prev => prev + " " + currentTranscript.trim());
+                    }
+                };
+
+                recognition.onerror = (event: any) => {
+                    console.error("Speech Error:", event.error);
+                    setIsListening(false);
+                };
+
+                recognition.onend = () => setIsListening(false);
+                recognitionRef.current = recognition;
+            }
+        }
+        return () => {
+            if (recognitionRef.current) recognitionRef.current.stop();
+            if (typeof window !== "undefined" && window.speechSynthesis) window.speechSynthesis.cancel();
+        };
+    }, []);
+
+    const speakAI = (text: string) => {
+        if (!speechEnabled || !('speechSynthesis' in window)) return;
+        window.speechSynthesis.cancel();
+        const cleanText = text.replace(/\*\*/g, '').replace(/\n/g, '. ');
+        const utterance = new SpeechSynthesisUtterance(cleanText);
+        utterance.rate = 1.05;
+        window.speechSynthesis.speak(utterance);
+    };
+
+    const toggleListening = () => {
+        if (!recognitionRef.current) {
+            alert("Speech recognition isn't supported in your browser (try Chrome/Edge).");
+            return;
+        }
+        if (isListening) {
+            recognitionRef.current.stop();
+        } else {
+            recognitionRef.current.start();
+            setIsListening(true);
+        }
+    };
 
     const handleStart = async () => {
         if (!selectedRole) return;
@@ -34,10 +94,9 @@ export default function InterviewPage() {
             const qs = await api.startInterview(selectedRole);
             setQuestions(qs);
             setCurrentQ(0);
-            setMessages([{
-                role: "ai",
-                content: `Welcome! I'm your AI interviewer. Let's get started with your ${JOB_ROLES.find(r => r.id === selectedRole)?.title} interview. I'll ask you ${qs.length} questions.\n\n**Question 1:** ${qs[0]}`,
-            }]);
+            const welcomeTxt = `Welcome! I'm your AI interviewer. Let's get started with your ${JOB_ROLES.find(r => r.id === selectedRole)?.title} interview. I'll ask you ${qs.length} questions.\n\n**Question 1:** ${qs[0]}`;
+            setMessages([{ role: "ai", content: welcomeTxt }]);
+            speakAI(welcomeTxt);
         } catch (error) {
             console.error("Failed to start interview:", error);
             setStarted(false);
@@ -68,6 +127,7 @@ export default function InterviewPage() {
             }
 
             setMessages(prev => [...prev, aiMsg]);
+            speakAI(aiMsg.content);
         } catch (error) {
             console.error("Evaluation failed:", error);
         } finally {
@@ -97,6 +157,20 @@ export default function InterviewPage() {
                     </h1>
                     <p className="text-dark-400 mt-2">Practice with AI-generated interview questions and get instant feedback</p>
                 </motion.div>
+
+                <div className="flex items-center justify-end gap-2 mb-2 pr-4">
+                    <span className="text-xs text-dark-400 font-semibold uppercase tracking-wider">AI Voice</span>
+                    <button 
+                        onClick={() => {
+                            setSpeechEnabled(!speechEnabled);
+                            if (speechEnabled) window.speechSynthesis.cancel();
+                        }}
+                        className={`w-10 h-5 rounded-full relative transition-colors ${speechEnabled ? "bg-accent-emerald" : "bg-dark-700"}`}
+                    >
+                        <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-white shadow transition-all ${speechEnabled ? "left-5" : "left-1"}`} />
+                    </button>
+                    {speechEnabled && <Volume2 className="w-4 h-4 text-accent-emerald" />}
+                </div>
 
                 {!started ? (
                     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
@@ -177,18 +251,27 @@ export default function InterviewPage() {
 
                         {/* Input / Finished */}
                         {!finished ? (
-                            <div className="flex gap-3">
-                                <textarea
-                                    value={answer} onChange={(e) => setAnswer(e.target.value)}
-                                    placeholder="Type your answer here..."
-                                    rows={3}
-                                    className="input-field flex-1 resize-none"
-                                    onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSubmit(); } }}
-                                />
+                            <div className="flex flex-col sm:flex-row gap-3">
+                                <div className="relative flex-1">
+                                    <textarea
+                                        value={answer} onChange={(e) => setAnswer(e.target.value)}
+                                        placeholder="Type your answer, or use the microphone to speak..."
+                                        rows={3}
+                                        className="input-field w-full resize-none pr-12"
+                                        onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSubmit(); } }}
+                                    />
+                                    <button 
+                                        onClick={toggleListening}
+                                        className={`absolute right-3 bottom-3 w-8 h-8 rounded-lg flex items-center justify-center transition-all ${isListening ? "bg-rose-500/20 text-rose-400 animate-pulse" : "bg-white/5 text-dark-400 hover:text-white"}`}
+                                        title={isListening ? "Stop listening" : "Start speaking"}
+                                    >
+                                        {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
+                                    </button>
+                                </div>
                                 <button onClick={handleSubmit} disabled={!answer.trim() || evaluating}
-                                    className="btn-primary !px-4 self-end disabled:opacity-50"
+                                    className="btn-primary !px-6 sm:self-end disabled:opacity-50 text-sm h-12 flex-shrink-0"
                                 >
-                                    <Send className="w-5 h-5" />
+                                    <Send className="w-4 h-4" /> Send Answer
                                 </button>
                             </div>
                         ) : (

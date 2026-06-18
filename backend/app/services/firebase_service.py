@@ -8,21 +8,31 @@ load_dotenv()
 # Initialize Firebase Admin based on standard credentials
 # Option 1: Using a service account JSON file path
 FIREBASE_CREDENTIALS_PATH = os.getenv("FIREBASE_CREDENTIALS_PATH")
+# Option 2: Using a raw JSON string (Better for Render/Vercel env vars)
+FIREBASE_JSON = os.getenv("FIREBASE_SERVICE_ACCOUNT_JSON")
 
 HAS_CREDENTIALS = False
 
 def init_firebase():
     global HAS_CREDENTIALS
     if not firebase_admin._apps:
-        if FIREBASE_CREDENTIALS_PATH and os.path.exists(FIREBASE_CREDENTIALS_PATH):
-            try:
+        try:
+            if FIREBASE_JSON:
+                import json
+                service_account_info = json.loads(FIREBASE_JSON)
+                cred = credentials.Certificate(service_account_info)
+                firebase_admin.initialize_app(cred)
+                HAS_CREDENTIALS = True
+                print("✅ Firebase Admin initialized via JSON env var.")
+            elif FIREBASE_CREDENTIALS_PATH and os.path.exists(FIREBASE_CREDENTIALS_PATH):
                 cred = credentials.Certificate(FIREBASE_CREDENTIALS_PATH)
                 firebase_admin.initialize_app(cred)
                 HAS_CREDENTIALS = True
-            except Exception as e:
-                print(f"Failed to load service account: {e}")
-        else:
-            print("[Warning] Firebase Admin credentials entirely missing. Using Test Mode.")
+                print(f"✅ Firebase Admin initialized via file: {FIREBASE_CREDENTIALS_PATH}")
+            else:
+                print("[Warning] Firebase Admin credentials entirely missing. Using Test Mode.")
+        except Exception as e:
+            print(f"❌ Failed to initialize Firebase: {e}")
 
 init_firebase()
 

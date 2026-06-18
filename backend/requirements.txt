@@ -18,3 +18,7 @@ joblib
 motor
 firebase-admin
 email-validator
+python-socketio
+aiofiles
+sentry-sdk
+cloudinary

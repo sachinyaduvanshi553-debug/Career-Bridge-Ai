@@ -54,7 +54,7 @@ export default function LandingPage() {
 
                 <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center pt-24 pb-16">
                     <motion.div initial="hidden" animate="visible" variants={fadeUp} custom={0}
-                        className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary-500/10 border border-primary-500/20 text-primary-300 text-sm font-medium mb-8"
+                        className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-medium mb-8"
                     >
                         <Sparkles className="w-4 h-4" /> Aligned with Skill India & Digital India Missions
                     </motion.div>
@@ -68,7 +68,7 @@ export default function LandingPage() {
                     </motion.h1>
 
                     <motion.p initial="hidden" animate="visible" variants={fadeUp} custom={2}
-                        className="mt-6 text-lg sm:text-xl text-dark-400 max-w-3xl mx-auto leading-relaxed"
+                        className="mt-6 text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed"
                     >
                         Detect skill gaps, get personalized learning roadmaps, and connect with real
                         job opportunities — all powered by AI. From blue-collar workers to tech professionals.
@@ -92,10 +92,10 @@ export default function LandingPage() {
                         className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto"
                     >
                         {STATS.map((stat) => (
-                            <div key={stat.label} className="glass-card p-5 text-center group hover:border-primary-500/30 transition-all duration-300">
-                                <stat.icon className="w-6 h-6 text-primary-400 mx-auto mb-2" />
-                                <div className="text-2xl md:text-3xl font-bold font-display text-white">{stat.value}</div>
-                                <div className="text-sm text-dark-400 mt-1">{stat.label}</div>
+                            <div key={stat.label} className="glass-card p-5 text-center group hover:border-primary/30 transition-all duration-300">
+                                <stat.icon className="w-6 h-6 text-primary mx-auto mb-2" />
+                                <div className="text-2xl md:text-3xl font-bold font-display text-foreground">{stat.value}</div>
+                                <div className="text-sm text-muted-foreground mt-1">{stat.label}</div>
                             </div>
                         ))}
                     </motion.div>
@@ -110,7 +110,7 @@ export default function LandingPage() {
                         initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }} className="text-center mb-16"
                     >
-                        <h2 className="section-heading text-white">
+                        <h2 className="section-heading text-foreground">
                             Everything You Need to <span className="gradient-text">Build Your Career</span>
                         </h2>
                         <p className="section-subheading mx-auto">
@@ -128,8 +128,8 @@ export default function LandingPage() {
                                 <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${feat.color} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`}>
                                     <feat.icon className="w-6 h-6 text-white" />
                                 </div>
-                                <h3 className="text-lg font-semibold text-white mb-2">{feat.title}</h3>
-                                <p className="text-dark-400 text-sm leading-relaxed">{feat.desc}</p>
+                                <h3 className="text-lg font-semibold text-foreground mb-2">{feat.title}</h3>
+                                <p className="text-muted-foreground text-sm leading-relaxed">{feat.desc}</p>
                             </motion.div>
                         ))}
                     </div>
@@ -143,8 +143,8 @@ export default function LandingPage() {
                         initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }} className="text-center mb-16"
                     >
-                        <h2 className="section-heading text-white">
-                            How <span className="gradient-text-cyan">CAREER BRIDGE - AI</span> Works
+                        <h2 className="section-heading text-foreground">
+                            How <span className="gradient-text-cyan">Career Bridge AI</span> Works
                         </h2>
                         <p className="section-subheading mx-auto">
                             From profile creation to job placement in 4 simple steps
@@ -166,14 +166,14 @@ export default function LandingPage() {
                                 viewport={{ once: true }} transition={{ delay: i * 0.15 }}
                                 className="text-center relative"
                             >
-                                <div className="w-16 h-16 rounded-2xl bg-dark-800 border border-white/10 flex items-center justify-center mx-auto mb-4 relative z-10">
-                                    <item.icon className="w-7 h-7 text-primary-400" />
-                                    <div className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-primary-500 text-white text-xs font-bold flex items-center justify-center">
+                                <div className="w-16 h-16 rounded-2xl bg-muted border border-border flex items-center justify-center mx-auto mb-4 relative z-10">
+                                    <item.icon className="w-7 h-7 text-primary" />
+                                    <div className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-primary text-primary-foreground text-xs font-bold flex items-center justify-center">
                                         {item.step}
                                     </div>
                                 </div>
-                                <h3 className="text-white font-semibold mb-2">{item.title}</h3>
-                                <p className="text-dark-400 text-sm">{item.desc}</p>
+                                <h3 className="text-foreground font-semibold mb-2">{item.title}</h3>
+                                <p className="text-muted-foreground text-sm">{item.desc}</p>
                             </motion.div>
                         ))}
                     </div>
@@ -188,7 +188,7 @@ export default function LandingPage() {
                         initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }} className="text-center mb-16"
                     >
-                        <h2 className="section-heading text-white">
+                        <h2 className="section-heading text-foreground">
                             Aligned with India&apos;s <span className="gradient-text">National Missions</span>
                         </h2>
                     </motion.div>
@@ -200,11 +200,11 @@ export default function LandingPage() {
                                 viewport={{ once: true }} transition={{ delay: i * 0.1 }}
                                 className="glass-card p-8 text-center group hover:border-primary-500/30 transition-all duration-300"
                             >
-                                <div className="w-16 h-16 rounded-2xl bg-primary-500/10 border border-primary-500/20 flex items-center justify-center mx-auto mb-4 group-hover:bg-primary-500/20 transition-colors">
-                                    <m.icon className="w-8 h-8 text-primary-400" />
+                                <div className="w-16 h-16 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center mx-auto mb-4 group-hover:bg-primary/20 transition-colors">
+                                    <m.icon className="w-8 h-8 text-primary" />
                                 </div>
-                                <h3 className="text-lg font-semibold text-white mb-2">{m.title}</h3>
-                                <p className="text-dark-400 text-sm">{m.desc}</p>
+                                <h3 className="text-lg font-semibold text-foreground mb-2">{m.title}</h3>
+                                <p className="text-muted-foreground text-sm">{m.desc}</p>
                             </motion.div>
                         ))}
                     </div>
@@ -224,7 +224,7 @@ export default function LandingPage() {
 
                         <div className="relative z-10 grid md:grid-cols-2 gap-10 items-center">
                             <div>
-                                <h2 className="section-heading text-white mb-6">
+                                <h2 className="section-heading text-foreground mb-6">
                                     Transforming India&apos;s Workforce,
                                     <span className="gradient-text"> One Skill at a Time</span>
                                 </h2>
@@ -236,7 +236,7 @@ export default function LandingPage() {
                                         "Enables government workforce planning with real data",
                                         "Bridges the skill gap between education and employment",
                                     ].map((item) => (
-                                        <li key={item} className="flex items-start gap-3 text-dark-300">
+                                        <li key={item} className="flex items-start gap-3 text-muted-foreground">
                                             <CheckCircle2 className="w-5 h-5 text-accent-emerald flex-shrink-0 mt-0.5" />
                                             <span className="text-sm">{item}</span>
                                         </li>
@@ -252,7 +252,7 @@ export default function LandingPage() {
                                 ].map((s) => (
                                     <div key={s.label} className="glass-card p-5 text-center">
                                         <div className="text-2xl font-bold gradient-text">{s.value}</div>
-                                        <div className="text-xs text-dark-400 mt-1">{s.label}</div>
+                                        <div className="text-xs text-muted-foreground mt-1">{s.label}</div>
                                     </div>
                                 ))}
                             </div>
@@ -268,10 +268,10 @@ export default function LandingPage() {
                     viewport={{ once: true }}
                     className="max-w-3xl mx-auto px-4"
                 >
-                    <h2 className="section-heading text-white mb-4">
+                    <h2 className="section-heading text-foreground mb-4">
                         Ready to <span className="gradient-text">Bridge Your Skills</span>?
                     </h2>
-                    <p className="text-dark-400 text-lg mb-8">
+                    <p className="text-muted-foreground text-lg mb-8">
                         Join thousands of Indians building demand-driven careers with AI guidance.
                     </p>
                     <Link href="/register" className="btn-primary text-lg !px-10 !py-4 inline-flex items-center gap-2 group">
@@ -282,15 +282,17 @@ export default function LandingPage() {
             </section>
 
             {/* Footer */}
-            <footer className="border-t border-white/5 py-12">
+            <footer className="border-t border-border/40 py-12">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="grid md:grid-cols-4 gap-8">
                         <div>
                             <div className="flex items-center gap-2 mb-4">
-                                <img src="/logo.png" alt="Logo" className="w-8 h-8 rounded-lg object-contain bg-white/5 p-0.5" />
-                                <span className="font-bold font-display text-white">CAREER BRIDGE - AI</span>
+                                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary-500 to-accent-purple flex items-center justify-center">
+                                    <Sparkles className="w-4 h-4 text-white" />
+                                </div>
+                                <span className="font-bold font-display text-foreground">Career Bridge AI</span>
                             </div>
-                            <p className="text-sm text-dark-400">AI-powered career guidance for every Indian citizen. Skill India aligned.</p>
+                            <p className="text-sm text-muted-foreground">AI-powered career guidance for every Indian citizen. Skill India aligned.</p>
                         </div>
                         <div>
                             <h4 className="text-white font-semibold mb-3 text-sm">Platform</h4>
@@ -312,13 +314,13 @@ export default function LandingPage() {
                         <div>
                             <h4 className="text-white font-semibold mb-3 text-sm">Aligned With</h4>
                             <ul className="space-y-2 text-sm text-dark-400">
-                                <li className="flex items-center gap-2"><Shield className="w-4 h-4 text-primary-400" /> Skill India Mission</li>
-                                <li className="flex items-center gap-2"><Globe className="w-4 h-4 text-primary-400" /> Digital India</li>
-                                <li className="flex items-center gap-2"><Users className="w-4 h-4 text-primary-400" /> Employment Mission</li>
+                                <li className="flex items-center gap-2"><Shield className="w-4 h-4 text-primary" /> Skill India Mission</li>
+                                <li className="flex items-center gap-2"><Globe className="w-4 h-4 text-primary" /> Digital India</li>
+                                <li className="flex items-center gap-2"><Users className="w-4 h-4 text-primary" /> Employment Mission</li>
                             </ul>
                         </div>
                     </div>
-                    <div className="border-t border-white/5 mt-8 pt-8 text-center text-sm text-dark-500">
+                    <div className="border-t border-border/40 mt-8 pt-8 text-center text-sm text-muted-foreground/60">
                         © 2026 CAREER BRIDGE - AI. Built for India, by India. 🇮🇳
                     </div>
                 </div>

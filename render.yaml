@@ -10,10 +10,20 @@ services:
     plan: free
     healthCheckPath: /health
     envVars:
+      - key: MONGO_URL
+        sync: false   # REQUIRED: e.g. mongodb+srv://...
+      - key: DB_NAME
+        value: career_setu
       - key: GEMINI_API_KEY
-        sync: false   # Will be set manually in Render dashboard
+        sync: false   # REQUIRED: your Gemini key
+      - key: JWT_SECRET_KEY
+        sync: false   # REQUIRED: random string for security
       - key: ALLOWED_ORIGINS
-        sync: false   # Set to your frontend URL, e.g. https://career-setu.onrender.com
+        value: https://career-setu-frontend.onrender.com
+      - key: ADZUNA_APP_ID
+        sync: false   # Value: 59e4ea87
+      - key: ADZUNA_APP_KEY
+        sync: false   # Value: 6905e87415d0ab06ddd1e64f25332124
 
   - type: web
     name: career-setu-frontend
@@ -23,9 +33,4 @@ services:
     plan: free
     envVars:
       - key: NEXT_PUBLIC_API_URL
-        fromService:
-          name: career-setu-backend
-          type: web
-          property: host
-        # Since Next.js uses NEXT_PUBLIC_ at build time, 
-        # Render will automatically pass this as a build arg if defined here.
+        value: https://career-setu-backend.onrender.com/api

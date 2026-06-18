@@ -8,7 +8,17 @@ logger = logging.getLogger(__name__)
 class LocalSkillGapAnalyzer:
     def __init__(self):
         # Using a fast, lightweight model for production-like speed
-        self.model = SentenceTransformer('paraphrase-MiniLM-L3-v2')
+        self._model = None
+
+    @property
+    def model(self):
+        if self._model is None:
+            try:
+                from sentence_transformers import SentenceTransformer
+                self._model = SentenceTransformer('paraphrase-MiniLM-L3-v2')
+            except Exception as e:
+                print(f"Warning: Could not load SentenceTransformer: {e}")
+        return self._model
 
     def analyze(self, user_skills: List[str], target_skills: List[str]) -> Dict[str, Any]:
         if not target_skills:

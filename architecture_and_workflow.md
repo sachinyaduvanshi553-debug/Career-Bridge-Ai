@@ -1,81 +1,157 @@
-# CAREER BRIDGE - AI: Working Flow & Architecture
+# 🏗️ CAREER BRIDGE - AI: Deep Technical Architecture & API Documentation
 
-This document provides a deep dive into the technical architecture, core working principles, and feature workflows of the CAREER BRIDGE - AI platform.
-
----
-
-## 🏗️ 1. High-Level Architecture
-
-CAREER BRIDGE - AI follows a modern **Decoupled Full-Stack Architecture**, ensuring scalability and clear separation of concerns.
-
-### **Frontend: Next.js 14 (App Router)**
-- **Role**: Client interface, user state management, and visual rendering.
-- **Key Tech**: React, Tailwind CSS, Framer Motion (Animations), Lucide React (Icons).
-- **Behavior**: Uses client-side components to handle complex multi-step interactions (like the Interview and Resume upload flows).
-
-### **Backend: FastAPI (Python 3.11)**
-- **Role**: Business logic, AI engine execution, and API fulfillment.
-- **Key Tech**: FastAPI, Uvicorn, Pydantic, python-dotenv.
-- **Engines**: The backend is modularly organized into "Engines" for specific tasks (Scoring, Matching, Analytics).
+This document provides the definitive technical specification for the Career Setu - AI platform, including backend logic, API schemas, and AI integration patterns.
 
 ---
 
-## 🧠 2. Core Working Principles
+## 1. System Topology
 
-### **The Hybrid AI Strategy**
-The platform uses a two-tier AI approach to balance speed and intelligence:
-
-1.  **Local NLP Tier (spaCy)**: 
-    - Used for **Entity Recognition** and **Skill Extraction**.
-    - Processes text locally on the server to identify technical and soft skills without external latency.
-2.  **Cloud LLM Tier (Google Gemini)**: 
-    - Used for **Reasoning and Qualitative Analysis**.
-    - Handles complex tasks like generating 90-day learning roadmaps, providing professional career advice, and evaluating interview answers with "human-like" nuance.
+Career Setu leverages a **Modern Full-Stack Python/Node Ecosystem**:
+- **Frontend**: Next.js 14 (App Router) + Tailwind CSS + GSAP.
+- **Backend**: FastAPI (Python 3.11) + Socket.io (Real-time).
+- **Database**: MongoDB (Async Motor driver).
+- **AI**: Google Gemini 1.5 Flash (Cloud) + spaCy (Local).
 
 ---
 
-## 🔄 3. Feature Workflows
+## 2. Core API Specification
 
-### **A. Intelligent Resume Analysis**
-1.  **Upload**: User drops a file (`.pdf`, `.txt`) in the frontend.
-2.  **API Call**: Frontend sends file to `/api/resume/analyze`.
-3.  **Extraction**: Backend uses `SkillExtractor` (spaCy) to get raw data.
-4.  **AI Scoring**: `ResumeScorer` sends the text + Target Role to **Gemini API**.
-5.  **Result**: Gemini returns a JSON object containing the ATS score, breakdown, and specific improvement tips.
-
-### **B. Skill Gap & Adaptive Roadmaps**
-1.  **Selection**: User selects a target "Future Role" (e.g., Data Scientist).
-2.  **Comparison**: Backend retrieves role requirements and compares them against the user's current profile skills.
-3.  **Gap Analysis**: `SkillGapAnalyzer` calculates exactly what's missing.
-4.  **Roadmap Generation**: `RoadmapGenerator` takes the "Missing Skills" and asks **Gemini** to structure a 30-60-90 day learning path, matching items to available courses in the database.
-
-### **C. AI Interview Coaching**
-1.  **Initialization**: User chooses a role; backend fetches relevant questions (from a pre-seeded bank or AI generation).
-2.  **Interaction**: Frontend manages the session state (current question index, timer, and answer input).
-3.  **Evaluation**: Once an answer is submitted, the `InterviewEngine` sends the Question + User Answer to **Gemini**.
-4.  **Feedback**: The user receives a score and technical feedback highlighting what was good and what was missed.
-
----
-
-## 📊 4. Workspace & Data Principles
-
-- **Mock Data Layer**: The system is designed to work out-of-the-box with high-quality mock datasets for Jobs, Courses, and Districts, allowing for immediate demonstration of value.
-- **CORS & Port Management**: The system is configured for cross-origin resource sharing, typically running the Frontend on port `3000` and the Backend on port `8001` (to avoid common Windows port 8000 conflicts).
-- **Extensibility**: The engine-based architecture allows for new AI features (like a Job Matcher or Career Recommender) to be added as independent Python modules without affecting the core API.
-
----
-
-## 💻 5. Tech Stack Summary
-
-| Layer | Technology | Purpose |
+### 2.1. Authentication & Profile
+| Method | Endpoint | Description |
 | :--- | :--- | :--- |
-| **Frontend** | Next.js 14 | Responsive UI & Route Management |
-| **Styling** | Tailwind CSS | Modern Utility-First Design |
-| **API** | FastAPI (Python) | High-performance Asynchronous Backend |
-| **Database/Mock** | Python Pydantic | Structured Data Modeling |
-| **NLP** | spaCy | Local Skill Identification |
-| **LLM** | Google Gemini | Deep reasoning & Generative Insights |
-| **Deployment**| Docker | Containerized Environment Sync |
+| `POST` | `/api/auth/register` | User onboarding with role selection (Worker/Professional/Customer). |
+| `POST` | `/api/auth/login` | JWT-based authentication. |
+| `GET` | `/api/profile` | Fetches consolidated user data including role-specific info. |
+| `POST` | `/api/profile/update` | Updates bio, skills, and social links. |
+
+### 2.2. AI Intelligence Engines
+| Method | Endpoint | AI Model | Task |
+| :--- | :--- | :--- | :--- |
+| `POST` | `/api/resume/analyze` | Gemini 1.5 | Full ATS scoring and structural analysis. |
+| `POST` | `/api/skills/gap` | spaCy + Logic| Calculates delta between profile & role. |
+| `GET` | `/api/roadmap/{id}` | Gemini 1.5 | Generates 90-day learning roadmap. |
+| `POST` | `/api/interview/evaluate` | Gemini 1.5 | Semantic evaluation of user answers. |
 
 ---
-*Created for the CAREER BRIDGE - AI technical documentation.*
+
+## 3. Data Models (Pydantic)
+
+The backend uses strictly typed models for validation:
+
+```python
+class UserProfile(BaseModel):
+    name: str
+    email: EmailStr
+    role: UserRole # Enum: worker, professional, customer, admin
+    skills: List[str] = []
+    is_verified: bool = False
+    location: str
+
+class ResumeAnalysis(BaseModel):
+    overall_score: int
+    extracted_skills: List[str]
+    missing_keywords: List[str]
+    suggestions: List[str]
+    strengths: List[str]
+```
+
+---
+
+## 4. AI Workflow Logic
+
+### 4.1. Hybrid AI Extraction
+The system uses a sequential pipeline to optimize for both speed and depth:
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant Backend
+    participant SPAcy
+    participant Gemini
+    
+    User->>Backend: Upload Resume (PDF)
+    Backend->>SPAcy: Extract Raw Entities (NLP)
+    SPAcy-->>Backend: Found: Python, React, SQL
+    Backend->>Gemini: Deep Analysis (Contextual reasoning)
+    Gemini-->>Backend: Insights: "Strong lead exp, lacks DevOps"
+    Backend-->>User: Final Report (JSON)
+```
+
+---
+
+## 5. Real-Time Communication (Socket.IO)
+
+The platform handles real-time marketplace events:
+
+- **Namespace**: `/ws`
+- **Events**:
+    - `authenticate`: Link socket ID to User Email.
+    - `request_update`: Notify customer when a worker accepts a job.
+    - `chat_message`: Direct delivery of messages.
+    - `broadcast_worker_update`: Notify all workers of new available tasks.
+
+---
+
+## 6. Directory Structure
+
+```text
+CAREER-SETU---AI/
+├── frontend/             # Next.js 14 Web Application
+│   ├── src/app           # Page Routes
+│   ├── src/components    # UI Components (Lucide/GSAP)
+│   └── src/lib           # API Client & WebSockets
+└── backend/              # FastAPI Application
+    ├── app/main.py       # Server Entry Point
+    ├── app/routers       # Feature-specific controllers
+    ├── app/services      # Cloud Service Logic (Gemini/CDN)
+    └── data/             # Mock Datasets (CSV)
+```
+
+---
+
+## 7. Environment Variables (.env)
+
+Essential keys for reproduction:
+- `MONGO_URL`: MongoDB connection string.
+- `GEMINI_API_KEY`: Google AI credentials.
+- `JWT_SECRET_KEY`: Security token signing.
+- `CLOUDINARY_URL`: Media storage (optional local fallback).
+
+## 8. Development & Deployment Workflow
+
+The platform is designed for scalable growth and ease of onboarding.
+
+### 8.1. Local Setup Workflow
+1. **Environment**: Python 3.11 virtual environment.
+2. **Dependencies**: `pip install -r requirements.txt`.
+3. **Database**: Local MongoDB instance (v6.0+).
+4. **NLP Models**: `python -m spacy download en_core_web_sm`.
+
+### 8.2. Continuous Integration / CI
+- **Linting**: Standard ESLint for Next.js and Flake8 for FastAPI.
+- **Testing**: `pytest` for backend engines; `next lint` for frontend integrity.
+
+### 8.3. Deployment Topology
+- **Production URL**: [https://career-setu.onrender.com](https://career-setu.onrender.com)
+- **Host**: Render.com (Unified for both layers or Decoupled).
+- **SSL**: Automatic via Cloudflare/Render.
+
+---
+
+## 9. Feature Specific Architecture
+
+### 9.1. The Skill Gap Mechanism
+1. **Input**: User skills array + Job Role requirements (from `skills_roles_dataset.csv`).
+2. **Logic**:
+   - Exact string matching.
+   - Case-insensitive normalization.
+   - Skill "Readiness" calculation using weighted scoring.
+
+### 9.2. Interview Feedback Engine
+1. **Voice Input**: Captures audio fragment -> STT (Browser API).
+2. **Processing**: Transcript sent to `/api/interview/evaluate`.
+3. **AI Evaluation**: Gemini 1.5 Flash compares the transcript against the "Ideal Answer" from `interview_qa_dataset.csv`.
+4. **Feedback loop**: Returns `score`, `strengths`, and `improvements`.
+
+---
+*Last Updated: 2026-04-17 | CAREER BRIDGE - AI Technical Team*

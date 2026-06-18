@@ -23,11 +23,12 @@ RUN pip install --no-cache-dir -r requirements.txt
 # ── Step 3: Download spaCy language model ────────────────────────────────────
 RUN python -m spacy download en_core_web_sm
 
-# ── Step 4: Pre-cache sentence-transformers model into the image ─────────────
-# Without this, the model (~90 MB) downloads from HuggingFace at container
-# startup, which blocks the port from opening and causes Render's health check
-# to fail ("No open ports detected").
-RUN python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('all-MiniLM-L6-v2'); print('Model cached OK')"
+# ── Step 4: Pre-cache sentence-transformers models into the image ────────────
+# Pre-download both models to avoid download timeouts during container startup on Render (free tier)
+RUN python -c "from sentence_transformers import SentenceTransformer; \
+    SentenceTransformer('all-MiniLM-L6-v2'); \
+    SentenceTransformer('paraphrase-MiniLM-L3-v2'); \
+    print('Models cached OK')"
 
 # ── Step 5: Copy application source ──────────────────────────────────────────
 COPY . .

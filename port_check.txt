@@ -1,0 +1,2 @@
+Port 3000 (Frontend): CLOSED
+Port 8000 (Backend): CLOSED

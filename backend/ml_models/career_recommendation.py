@@ -21,9 +21,9 @@ class LocalCareerRecommender:
                 self.mlb = joblib.load(mlb_path)
                 print("Loaded career recommendation models successfully.")
             else:
-                print(f"Warning: Model files not found in {models_dir}")
-        except Exception as e:
-            print(f"Warning: Could not load career recommendation model: {e}")
+                pass
+        except Exception:
+            pass
 
     def recommend(self, skills: List[str]) -> List[str]:
         if not self.model or not self.mlb:

@@ -10,14 +10,17 @@ class UserRole(str, Enum):
     ADMIN = "admin"
 
 class UserProfile(BaseModel):
-    name: str
+    name: str = Field(..., min_length=2)
     email: EmailStr
-    phone: str
+    phone: str = Field(..., min_length=10, max_length=15) # Basic length check
     location: str
     education: Optional[str] = None
     skills: List[str] = []
     interests: List[str] = []
     bio: Optional[str] = None
+    profile_photo: Optional[str] = None
+    resume_url: Optional[str] = None
+    aadhaar_url: Optional[str] = None
     role: UserRole = UserRole.PROFESSIONAL
     is_verified: bool = False
     aadhaar_verified: bool = False
@@ -29,7 +32,7 @@ class UserProfile(BaseModel):
 
 class UserRegistration(UserProfile):
     password: SecretStr
-    otp: str
+    otp: Optional[str] = None
 
 class SendOTPRequest(BaseModel):
     phone: str
@@ -80,7 +83,7 @@ class JobListing(BaseModel):
 # --- New Models for Multi-Role Platform ---
 
 class WorkerProfile(BaseModel):
-    user_id: str
+    user_id: Optional[str] = None
     aadhaar_number: Optional[str] = None
     skills: List[str] = []
     experience_years: int = 0
@@ -92,9 +95,25 @@ class WorkerProfile(BaseModel):
     total_earnings: float = 0.0
     availability: bool = True
 
+class ProfessionalProfile(BaseModel):
+    user_id: Optional[str] = None
+    current_job_title: Optional[str] = None
+    industry: Optional[str] = None
+    certifications: List[str] = []
+    mentorship_available: bool = False
+    years_in_field: int = 0
+    projects: List[str] = []
+
+class CustomerProfile(BaseModel):
+    user_id: Optional[str] = None
+    preferences: List[str] = []
+    total_spent: float = 0.0
+    saved_locations: List[str] = []
+    preferred_language: str = "Hindi"
+
 class ServiceRequest(BaseModel):
     id: Optional[str] = None
-    customer_id: str
+    customer_id: Optional[str] = None
     worker_id: Optional[str] = None
     work_type: str
     description: str

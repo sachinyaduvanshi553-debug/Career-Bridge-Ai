@@ -11,33 +11,19 @@ import {
 const STATES = Array.from(new Set(JOB_LISTINGS.map(j => j.state)));
 const TYPES = ["Full-time", "Part-time", "Remote", "Internship"];
 
-import { useEffect } from "react";
-import { api } from "@/lib/api";
+import { useJobs } from "@/hooks/useApi";
+import { Skeleton } from "@/components/ui";
 
 export default function JobsPage() {
     const [search, setSearch] = useState("");
     const [stateFilter, setStateFilter] = useState("");
     const [typeFilter, setTypeFilter] = useState("");
     const [showFilters, setShowFilters] = useState(false);
-    const [jobs, setJobs] = useState(JOB_LISTINGS);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        async function loadJobs() {
-            try {
-                const data = await api.getJobs(stateFilter || undefined);
-                setJobs(data);
-            } catch (error) {
-                console.error("Failed to load jobs:", error);
-            } finally {
-                setLoading(false);
-            }
-        }
-        loadJobs();
-    }, [stateFilter]);
+    const { data, isLoading: loading } = useJobs(search, stateFilter);
+    const jobs = data || JOB_LISTINGS;
 
     const filtered = useMemo(() => {
-        return jobs.filter(job => {
+        return jobs.filter((job: any) => {
             const matchSearch = !search || job.title.toLowerCase().includes(search.toLowerCase()) || job.company.toLowerCase().includes(search.toLowerCase()) || job.skills.some((s: string) => s.toLowerCase().includes(search.toLowerCase()));
             const matchType = !typeFilter || job.type === typeFilter;
             return matchSearch && matchType;
@@ -119,13 +105,21 @@ export default function JobsPage() {
 
                 {/* Job Listings */}
                 {loading ? (
-                    <div className="flex flex-col items-center justify-center p-20 glass-card">
-                        <div className="w-12 h-12 border-4 border-primary-500/20 border-t-primary-500 rounded-full animate-spin mb-4"></div>
-                        <p className="text-dark-400 animate-pulse">Fetching the best roles for you...</p>
+                    <div className="space-y-4">
+                        {[...Array(4)].map((_, i) => (
+                            <div key={`sk-${i}`} className="glass-card p-6 flex flex-col sm:flex-row gap-4">
+                                <Skeleton className="w-10 h-10 rounded-xl flex-shrink-0" />
+                                <div className="flex-1 space-y-2">
+                                    <Skeleton className="h-5 w-48" />
+                                    <Skeleton className="h-4 w-32" />
+                                    <Skeleton className="h-4 w-2/3 mt-2" />
+                                </div>
+                            </div>
+                        ))}
                     </div>
                 ) : (
                     <div className="space-y-4">
-                        {filtered.map((job, i) => (
+                        {filtered.map((job: any, i: number) => (
                             <motion.div key={job.id}
                                 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
                                 className="glass-card-hover p-6 group cursor-pointer"
@@ -143,7 +137,7 @@ export default function JobsPage() {
                                         </div>
                                         <p className="text-sm text-dark-400 mb-3">{job.description}</p>
                                         <div className="flex flex-wrap gap-2 mb-3">
-                                            {job.skills.map(s => <span key={s} className="tag text-xs">{s}</span>)}
+                                            {job.skills.map((s: string) => <span key={s} className="tag text-xs">{s}</span>)}
                                         </div>
                                         <div className="flex flex-wrap items-center gap-4 text-xs text-dark-400">
                                             <span className="flex items-center gap-1"><MapPin className="w-3 h-3" /> {job.location}, {job.state}</span>

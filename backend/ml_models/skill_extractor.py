@@ -6,18 +6,24 @@ logger = logging.getLogger(__name__)
 
 class LocalSkillExtractor:
     def __init__(self):
-        model_path = os.path.join(os.path.dirname(__file__), "../models/skill_extractor_model")
-        try:
-            self.nlp = spacy.load(model_path)
-            logger.info(f"Loaded local skill extraction model from {model_path}")
-        except:
-            logger.warning("Local skill extraction model not found. Attempting to load en_core_web_md...")
+        self.model_path = os.path.join(os.path.dirname(__file__), "../models/skill_extractor_model")
+        self._nlp = None
+
+    @property
+    def nlp(self):
+        if self._nlp is None:
             try:
-                self.nlp = spacy.load("en_core_web_md")
-                logger.info("Loaded en_core_web_md successfully.")
+                self._nlp = spacy.load(self.model_path)
+                logger.info(f"Loaded local skill extraction model from {self.model_path}")
             except:
-                logger.error("en_core_web_md not found. Using blank model.")
-                self.nlp = spacy.blank("en")
+                logger.warning("Local skill extraction model not found. Attempting to load en_core_web_md...")
+                try:
+                    self._nlp = spacy.load("en_core_web_md")
+                    logger.info("Loaded en_core_web_md successfully.")
+                except:
+                    logger.error("en_core_web_md not found. Using blank model.")
+                    self._nlp = spacy.blank("en")
+        return self._nlp
 
     def extract_skills(self, text: str):
         text_lower = text.lower()

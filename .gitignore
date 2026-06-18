@@ -1,38 +1,43 @@
-# Dependencies
+# Node.js
 node_modules/
-dist/
 .next/
-out/
+dist/
 build/
-*.log
-
-# Python
-*.pyc
-__pycache__/
-.venv/
-venv/
-*.joblib
-
-# Secrets & Config
 .env
 .env.local
-.env.development
-.env.test
-.env.production
-firebase-adminsdk.json
-*.json
-!package.json
-!tsconfig.json
-!next.config.js
-!postcss.config.js
-!tailwind.config.js
-!package-lock.json
+.env.development.local
+.env.test.local
+.env.production.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.venv/
+env/
+.env
+.pytest_cache/
+.coverage
+htmlcov/
+*.log
+
+# Docker
+.dockerignore
 
 # IDE & OS
-.DS_Store
 .vscode/
 .idea/
-.expo/
-.turbo/
-.pytest_cache/
-.python-version
+.DS_Store
+Thumbs.db
+
+# Project Specific
+backend/uploads/
+backend/data/*.db
+backend/ml_models/*.bin
+frontend/out/
+scratch/

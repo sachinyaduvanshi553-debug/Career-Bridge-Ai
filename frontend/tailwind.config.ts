@@ -9,7 +9,14 @@ const config: Config = {
     theme: {
         extend: {
             colors: {
+                border: "rgb(var(--border) / <alpha-value>)",
+                input: "rgb(var(--input) / <alpha-value>)",
+                ring: "rgb(var(--ring) / <alpha-value>)",
+                background: "rgb(var(--background) / <alpha-value>)",
+                foreground: "rgb(var(--foreground) / <alpha-value>)",
                 primary: {
+                    DEFAULT: "rgb(var(--primary) / <alpha-value>)",
+                    foreground: "rgb(var(--primary-foreground) / <alpha-value>)",
                     50: '#eef2ff',
                     100: '#e0e7ff',
                     200: '#c7d2fe',
@@ -22,25 +29,48 @@ const config: Config = {
                     900: '#312e81',
                     950: '#1e1b4b',
                 },
+                secondary: {
+                    DEFAULT: "rgb(var(--secondary) / <alpha-value>)",
+                    foreground: "rgb(var(--secondary-foreground) / <alpha-value>)",
+                },
+                destructive: {
+                    DEFAULT: "rgb(var(--destructive) / <alpha-value>)",
+                    foreground: "rgb(var(--destructive-foreground) / <alpha-value>)",
+                },
+                muted: {
+                    DEFAULT: "rgb(var(--muted) / <alpha-value>)",
+                    foreground: "rgb(var(--muted-foreground) / <alpha-value>)",
+                },
                 accent: {
+                    DEFAULT: "rgb(var(--accent) / <alpha-value>)",
+                    foreground: "rgb(var(--accent-foreground) / <alpha-value>)",
                     cyan: '#06b6d4',
                     purple: '#a855f7',
                     pink: '#ec4899',
                     emerald: '#10b981',
                     amber: '#f59e0b',
                 },
+                popover: {
+                    DEFAULT: "rgb(var(--popover) / <alpha-value>)",
+                    foreground: "rgb(var(--popover-foreground) / <alpha-value>)",
+                },
+                card: {
+                    DEFAULT: "rgb(var(--card) / <alpha-value>)",
+                    foreground: "rgb(var(--card-foreground) / <alpha-value>)",
+                },
+                white: 'rgb(var(--foreground) / <alpha-value>)', // Keep for compatibility but it maps to foreground now
                 dark: {
-                    50: '#f8fafc',
-                    100: '#f1f5f9',
-                    200: '#e2e8f0',
-                    300: '#cbd5e1',
-                    400: '#94a3b8',
-                    500: '#64748b',
-                    600: '#475569',
-                    700: '#334155',
-                    800: '#1e293b',
-                    900: '#0f172a',
-                    950: '#020617',
+                    50: 'rgb(var(--foreground) / <alpha-value>)', // Simulating the old scale for compatibility
+                    100: 'rgb(var(--foreground) / 0.9)',
+                    200: 'rgb(var(--foreground) / 0.8)',
+                    300: 'rgb(var(--foreground) / 0.7)',
+                    400: 'rgb(var(--foreground) / 0.6)',
+                    500: 'rgb(var(--foreground) / 0.5)',
+                    600: 'rgb(var(--foreground) / 0.4)',
+                    700: 'rgb(var(--foreground) / 0.3)',
+                    800: 'rgb(var(--foreground) / 0.2)',
+                    900: 'rgb(var(--foreground) / 0.1)',
+                    950: 'rgb(var(--background) / <alpha-value>)',
                 }
             },
             fontFamily: {

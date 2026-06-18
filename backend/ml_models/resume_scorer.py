@@ -5,15 +5,7 @@ from typing import Dict, Any, List, Optional
 
 class LocalResumeScorer:
     def __init__(self):
-        models_dir = os.path.join(os.path.dirname(__file__), "../models")
-        model_path = os.path.join(models_dir, "resume_scoring_model.joblib")
-        try:
-            self.model = joblib.load(model_path)
-            print(f"Loaded resume scoring model from {model_path}")
-        except Exception as e:
-            print(f"Warning: Could not load resume scoring model: {e}")
-            self.model = None
-
+        # We use spacy and semantic transformers instead of the legacy joblib model
         try:
             self.nlp = spacy.load("en_core_web_sm")
             print("Loaded spacy model en_core_web_sm")
@@ -24,13 +16,18 @@ class LocalResumeScorer:
         from .skill_extractor import LocalSkillExtractor
         self.extractor = LocalSkillExtractor()
         
-        try:
-            from sentence_transformers import SentenceTransformer
-            self.semantic_model = SentenceTransformer('paraphrase-MiniLM-L3-v2')
-            print("Loaded SentenceTransformer for semantic scoring.")
-        except Exception as e:
-            print(f"Warning: Could not load SentenceTransformer: {e}")
-            self.semantic_model = None
+        self._semantic_model = None  # Lazy-load
+
+    @property
+    def semantic_model(self):
+        if self._semantic_model is None:
+            try:
+                from sentence_transformers import SentenceTransformer
+                self._semantic_model = SentenceTransformer('paraphrase-MiniLM-L3-v2')
+                print("Loaded SentenceTransformer for semantic scoring.")
+            except Exception as e:
+                print(f"Warning: Could not load SentenceTransformer: {e}")
+        return self._semantic_model
 
     def analyze(self, text: str, target_skills: Optional[List[str]] = None) -> Dict[str, Any]:
         doc = self.nlp(text)

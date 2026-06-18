@@ -1,14 +1,25 @@
 try:
     from ml_models.resume_scorer import LocalResumeScorer
 except ImportError:
-    from ..ml_models.resume_scorer import LocalResumeScorer
+    try:
+        from ..ml_models.resume_scorer import LocalResumeScorer
+    except ImportError as e:
+        print(f"Warning: Could not import LocalResumeScorer due to environment restrictions: {e}")
+        LocalResumeScorer = None
 
 from typing import List, Dict, Any, Optional
 from .services.gemini_service import gemini_service
 
 class ResumeScorer:
     def __init__(self, roles_db: Optional[List[Any]] = None):
-        self.scorer = LocalResumeScorer()
+        if LocalResumeScorer:
+            try:
+                self.scorer = LocalResumeScorer()
+            except Exception as e:
+                print(f"Warning: Could not initialize LocalResumeScorer: {e}")
+                self.scorer = None
+        else:
+            self.scorer = None
         self.roles_db = roles_db
 
     async def score_resume(self, resume_text: str, target_role: Optional[str] = None) -> Dict[str, Any]:
@@ -27,7 +38,14 @@ class ResumeScorer:
                     target_skills = role_match.requiredSkills
 
         # Get local analysis with semantic mapping
-        local_analysis = self.scorer.analyze(resume_text, target_skills=target_skills)
+        if self.scorer:
+            try:
+                local_analysis = self.scorer.analyze(resume_text, target_skills=target_skills)
+            except Exception as e:
+                print(f"Warning: Scoring failed: {e}")
+                local_analysis = {"score": 50, "skills": [], "feedback": ["AI engines temporarily limited by application policy."], "metrics": {}}
+        else:
+            local_analysis = {"score": 50, "skills": [], "feedback": ["AI engines temporarily limited by application policy."], "metrics": {}}
         
         # Enhance with Gemini if available
         skills_str = ', '.join(target_skills) if target_skills else 'General industry standards'
